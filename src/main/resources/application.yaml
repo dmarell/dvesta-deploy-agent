@@ -1,0 +1,10 @@
+dvesta-gateway.username: s1
+dvesta-gateway.password: pass-s1
+
+---
+spring.profiles: local
+dvesta-gateway.websock-endpoint: ws://localhost:8093/gateway-websock
+
+---
+spring.profiles: prod
+dvesta-gateway.websock-endpoint: ws://caglabs.se/dvesta-gateway/gateway-websock

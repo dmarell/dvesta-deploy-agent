@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <jmxConfigurator/>
+
+    <logger name="se.marell.dvestagatewayclient" level="trace"/>
+    <logger name="se.marell.dvesta" level="info"/>
+    <logger name="org.springframework" level="info"/>
+
+    <root level="warn">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </root>
+</configuration>
