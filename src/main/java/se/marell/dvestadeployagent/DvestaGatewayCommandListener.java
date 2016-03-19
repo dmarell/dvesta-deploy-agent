@@ -31,6 +31,7 @@ class DvestaGatewayCommandListener implements GatewayCommandListener {
                 String artifactDownloadUrl = commandArgs.get(4);
                 try {
                     // serviceName installDir artifactDownloadUrl
+                    logger.info("deploying {}", serviceName);
                     String cmd = String.format("sh deploy.sh -u %s -p %s %s %s %s",
                             artifactDownloadUser,
                             artifactDownloadPassword,
