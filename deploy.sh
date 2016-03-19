@@ -1,44 +1,109 @@
 #!/bin/sh
 
-#
-# Deploy artifact on this host.
-#
 # Preparations on RPi:
-# 1) Append content of ~/<jenkinsuser>/.ssh/id_rsa.pub to TARGET_HOST:/home/pi/.ssh/authorized_keys
-# 2) Make sure user pi can run sudo: sudo adduser pi sudo
-# 3) Make sure user pi can run sudo without entering a password: Append to /etc/sudoers: pi ALL=NOPASSWD: ALL
-#
+# Append content of ~/<jenkinsuser>/.ssh/id_rsa.pub to TARGET_HOST:/home/pi/.ssh/authorized_keys
 
-ARTIFACT_DOWNLOAD_URL=$1
-ARTIFACT_DOWNLOAD_USER=$2
-ARTIFACT_DOWNLOAD_PASSWORD=$3
-ARTIFACT_FILENAME=$4
-INSTALL_DIR=$5
-JARFILE=$6
-SERVICE_NAME=$7
+while test $# -gt 0; do
+        case "$1" in
+                -h|--help)
+                        echo "$scriptFilename - deploy java application as an init service"
+                        echo " "
+                        echo "$scriptFilename [options] serviceName installDir artifactDownloadUrl"
+                        echo " "
+                        echo "options:"
+                        echo "-h, --help                show brief help"
+                        echo "-j                        Name of jarfile"
+                        echo "-u                        username for download"
+                        echo "-p                        password for download"
+                        exit 0
+                        ;;
+                -u)
+                        shift
+                        if test $# -gt 0; then
+                                artifactDownloadUsername=$1
+                        else
+                                echo "no username specified"
+                                exit 1
+                        fi
+                        shift
+                        ;;
+                -p)
+                        shift
+                        if test $# -gt 0; then
+                                artifactDownloadPassword=$1
+                        else
+                                echo "no password specified"
+                                exit 1
+                        fi
+                        shift
+                        ;;
+                -j)
+                        shift
+                        if test $# -gt 0; then
+                                jarFilename=$1
+                        else
+                                echo "no jarfilename specified"
+                                exit 1
+                        fi
+                        shift
+                        ;;
+                *)
+                        break
+                        ;;
+        esac
+done
+
+scriptFilename=`basename "$0"`
+serviceName=$1
+installDir=$2
+artifactDownloadUrl=$3
+artifactFilename=`basename ${artifactDownloadUrl}`
+
+#echo scriptFilename: $scriptFilename
+#echo serviceName: $serviceName
+#echo installDir: $installDir
+#echo artifactDownloadUrl: $artifactDownloadUrl
+#echo artifactFilename: $artifactFilename
+#echo jarFilename: $jarFilename
+#echo artifactDownloadUsername: $artifactDownloadUsername
+#echo artifactDownloadPassword: $artifactDownloadPassword
 
 # Initalizations if first time
+#
+sudo adduser pi sudo 2> /dev/null
+# Make sure user pi can run sudo without entering a password: Append to /etc/sudoers: pi ALL=NOPASSWD: ALL
+if sudo -n true 2>/dev/null; then
+    echo "Got sudo without password"
+else
+    if [ $? -ne 0 ] ; then echo 'pi ALL=(ALL:ALL) ALL' >> /etc/sudoers ; fi
+fi
 sudo usermod -a -G audio pi
-mkdir -p ${INSTALL_DIR}
-
-cd ${INSTALL_DIR}
+mkdir -p ${installDir}
 
 # Download artifact file to installation directory
-curl -O --user ${ARTIFACT_DOWNLOAD_USER}:${ARTIFACT_DOWNLOAD_PASSWORD} ${ARTIFACT_DOWNLOAD_URL}
+cd ${installDir}
+if [ -z "$var" ]; then
+  curl -O ${artifactDownloadUrl}
+else
+  curl -O --user ${artifactDownloadUser}:${artifactDownloadPassword} ${artifactDownloadUrl}
+fi
 
 # Stop service if it is running
-sudo service ${SERVICE_NAME} stop 2> /dev/null || true
+sudo service ${serviceName} stop 2> /dev/null || true
 
-# If a jar file with that name already exist, rename it in case the service is still running and locks the file
-[ ! -f ${JARFILE} ] || mv -f ${JARFILE} ${JARFILE}.old
+if [ -z "$jarFilename" ]; then
+  # If a jar file with that name already exist, rename it in case the service is still running and locks the file
+  jarFile=${serviceName}.jar
+  [ ! -f ${jarFile} ] || mv -f ${jarFile} ${jarFile}.old
+fi
 
 # Unpack installation file
-tar xf ${ARTIFACT_FILENAME}
+tar xf ${artifactFilename}
 
 # Install service, if first time
-sudo cp ${SERVICE_NAME} /etc/init.d;
-sudo chmod +x /etc/init.d/${SERVICE_NAME};
-sudo update-rc.d ${SERVICE_NAME} defaults;
+sudo cp ${serviceName} /etc/init.d;
+sudo chmod +x /etc/init.d/${serviceName};
+sudo update-rc.d ${serviceName} defaults;
 
 # Start service
-sudo service ${SERVICE_NAME} start
+sudo service ${serviceName} start
