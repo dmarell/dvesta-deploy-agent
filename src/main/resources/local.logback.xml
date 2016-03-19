@@ -3,6 +3,7 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <jmxConfigurator/>
 
+    <logger name="se.marell.dvestadeployagent" level="trace"/>
     <logger name="se.marell.dvestagatewayclient" level="trace"/>
     <logger name="se.marell.dvesta" level="info"/>
     <logger name="org.springframework" level="info"/>

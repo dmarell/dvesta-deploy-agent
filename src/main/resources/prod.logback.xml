@@ -14,6 +14,7 @@
         </encoder>
     </appender>
 
+    <logger name="se.marell.dvestadeployagent" level="info"/>
     <logger name="se.marell.dvestagatewayclient" level="info"/>
     <logger name="se.marell.dvesta" level="info"/>
     <logger name="org.springframework" level="info"/>

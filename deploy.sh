@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # Preparations on RPi:
 # Append content of ~/<jenkinsuser>/.ssh/id_rsa.pub to TARGET_HOST:/home/pi/.ssh/authorized_keys
 
