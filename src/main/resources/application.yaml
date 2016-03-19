@@ -5,8 +5,8 @@ endpoints.shutdown.enabled: true
 security.user.name: admin
 security.user.password: password
 
-dvesta-gateway.username: s1
-dvesta-gateway.password: pass-s1
+dvesta-gateway.username: s2
+dvesta-gateway.password: pass-s2
 
 ---
 spring.profiles: local
