@@ -18,10 +18,11 @@ class DvestaGatewayCommandListener implements GatewayCommandListener {
 
     @Override
     public void command(CommandResponseSender sender, String messageId, String commandName, List<String> commandArgs) {
+        logger.info("command: {}, num args: {}", commandName, commandArgs.size());
         if (commandName.equals("deploy")) {
             if (commandArgs.size() != 5) {
                 String msg = "deploy: Expected 5 arguments, got " + commandArgs.size();
-                logger.error(msg);
+                logger.warn(msg);
                 sender.sendResponse(commandName, msg);
             } else {
                 String artifactDownloadUser = commandArgs.get(0);
@@ -47,7 +48,9 @@ class DvestaGatewayCommandListener implements GatewayCommandListener {
                 }
             }
         } else {
-            sender.sendResponse(messageId, "Unknown command: " + commandName);
+            String msg = "Unknown command: " + commandName;
+            logger.warn(msg);
+            sender.sendResponse(messageId, msg);
         }
     }
 }
