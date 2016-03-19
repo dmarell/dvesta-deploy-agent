@@ -82,6 +82,7 @@ mkdir -p ${installDir}
 
 # Download artifact file to installation directory
 cd ${installDir}
+rm -f *-assemble.tar.gz
 if [ -z "$var" ]; then
   curl -O ${artifactDownloadUrl}
 else

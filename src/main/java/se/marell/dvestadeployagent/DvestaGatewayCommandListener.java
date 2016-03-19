@@ -19,27 +19,25 @@ class DvestaGatewayCommandListener implements GatewayCommandListener {
     @Override
     public void command(CommandResponseSender sender, String messageId, String commandName, List<String> commandArgs) {
         if (commandName.equals("deploy")) {
-            if (commandArgs.size() != 7) {
-                String msg = "update: Expected 7 arguments, got " + commandArgs.size();
+            if (commandArgs.size() != 5) {
+                String msg = "deploy: Expected 5 arguments, got " + commandArgs.size();
                 logger.error(msg);
                 sender.sendResponse(commandName, msg);
             } else {
-                String artifactDownloadUrl = commandArgs.get(0);
-                String artifactDownloadUser = commandArgs.get(1);
-                String artifactDownloadPassword = commandArgs.get(2);
-                String artifactFilename = commandArgs.get(3);
-                String installDir = commandArgs.get(4);
-                String jarFile = commandArgs.get(5);
-                String serviceName = commandArgs.get(6);
+                String artifactDownloadUser = commandArgs.get(0);
+                String artifactDownloadPassword = commandArgs.get(1);
+                String serviceName = commandArgs.get(2);
+                String installDir = commandArgs.get(3);
+                String artifactDownloadUrl = commandArgs.get(4);
                 try {
-                    String cmd = String.format("sh deploy.sh %s %s %s %s %s %s %s",
-                            artifactDownloadUrl,
+                    // serviceName installDir artifactDownloadUrl
+                    String cmd = String.format("sh deploy.sh -u %s -p %s %s %s %s",
                             artifactDownloadUser,
                             artifactDownloadPassword,
-                            artifactFilename,
+                            serviceName,
                             installDir,
-                            jarFile,
-                            serviceName);
+                            artifactDownloadUrl
+                            );
                     Runtime.getRuntime().exec(cmd);
                     logger.info("deploy succeeded");
                 } catch (IOException e) {
