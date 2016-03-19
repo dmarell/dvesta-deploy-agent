@@ -1,3 +1,10 @@
+
+# Use: curl --user admin:password -X POST localhost:9092/shutdown
+management.port: 9092
+endpoints.shutdown.enabled: true
+security.user.name: admin
+security.user.password: password
+
 dvesta-gateway.username: s1
 dvesta-gateway.password: pass-s1
 

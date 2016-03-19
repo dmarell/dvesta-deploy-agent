@@ -91,17 +91,21 @@ fi
 # Stop service if it is running
 sudo service ${serviceName} stop 2> /dev/null || true
 
-if [ -z "$jarFilename" ]; then
+if [ "$jarFilename" != "" ]; then
   jarFileShort=${serviceName}.jar
   [ ! -f ${jarFileShort} ] || mv -f ${jarFileShort} ${jarFileShort}.old
-  if [${jarFileShort} -ne ${jarFilename}]; then
-    mv ${jarFilename} ${jarFileShort}
-  fi
   # If a jar file with that name already exist, rename it in case the service is still running and locks the file
 fi
 
 # Unpack installation file
 tar xf ${artifactFilename}
+
+if [ "$jarFilename" != "" ]; then
+  if [ -e ${jarFilename} ] && [ "${jarFileShort}" != "${jarFilename}" ]; then
+    echo  moving...
+    mv ${jarFilename} ${jarFileShort}
+  fi
+fi
 
 # Install service, if first time
 sudo cp ${serviceName} /etc/init.d;

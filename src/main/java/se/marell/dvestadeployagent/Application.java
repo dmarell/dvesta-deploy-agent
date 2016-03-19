@@ -1,20 +1,19 @@
+/*
+ * Created by Daniel Marell 2016-03-19
+ */
 package se.marell.dvestadeployagent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import se.marell.dvesta.system.BuildInfo;
 import se.marell.dvesta.system.LogbackLoggerInitializer;
 import se.marell.dvesta.system.RunEnvironment;
 
-@EnableWebSecurity
-@EnableAsync
-@EnableScheduling
+@SpringBootApplication
 public class Application {
     private static Logger logger = LoggerFactory.getLogger(Application.class);
 
