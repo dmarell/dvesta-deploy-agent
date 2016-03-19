@@ -4,6 +4,8 @@ The dvesta deploy agent is a service running on a host. It holds a connection to
 It listen to and execute deploy commands.
 
 ## Release notes
+* Version 1.0.4 - 2016-03-18
+  * Deploy script bug fixes.
 * Version 1.0.3 - 2016-03-18
   * Deploy scripts, installation.
 * Version 1.0.2 - 2016-03-17
