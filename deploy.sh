@@ -88,7 +88,7 @@ rm -f *-assemble.tar.gz
 if [ -z "$var" ]; then
   curl -O ${artifactDownloadUrl}
 else
-  curl -O --user ${artifactDownloadUser}:${artifactDownloadPassword} ${artifactDownloadUrl}
+  curl -O --user ${artifactDownloadUsername}:${artifactDownloadPassword} ${artifactDownloadUrl}
 fi
 
 # Stop service if it is running
