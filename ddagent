@@ -36,6 +36,10 @@
 # Java installation raspian:
 JAVA_HOME=/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt
 
+# Change username and password!
+dvestaGatewayUsername=s2
+dvestaGatewayPassword=pass-s2
+
 serviceName=`basename "$0"`
 serviceUser="pi"                              # OS user name for the service
 serviceGroup="pi"                             # OS group name for the service
@@ -48,7 +52,9 @@ javaCommand="java"                            # name of the Java launcher withou
 javaExe="$JAVA_HOME/bin/$javaCommand"         # file name of the Java application launcher executable
 
  # arguments for Java launcher
-javaArgs="-Dspring.profiles.active=prod -jar $serviceName.jar"
+javaArgs="-Dspring.profiles.active=prod -jar $serviceName.jar \
+          --dvesta-gateway.username=$dvestaGatewayUsername \
+          --dvesta-gateway.password=$dvestaGatewayPassword"
 
 javaCommandLine="$javaExe $javaArgs"          # command line to start the Java service application
 javaCommandLineKeyword="ddagent.jar"          # a keyword that occurs on the commandline, used to detect an already running service process and to distinguish it from others

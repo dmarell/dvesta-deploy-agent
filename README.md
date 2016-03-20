@@ -4,6 +4,10 @@ The dvesta deploy agent is a service running on a host. It holds a connection to
 It listen to and execute deploy commands.
 
 ## Release notes
+* Version 1.0.15 - 2016-03-20
+  * Wait for deploy command to return and log command result
+  * Fixed AppVersion
+  * Encourange to change dvesta gateway username and password
 * Version 1.0.14 - 2016-03-20
   * deploy.sh bug fix. Logging.
 * Version 1.0.13 - 2016-03-20
@@ -38,9 +42,19 @@ It listen to and execute deploy commands.
 ## Installation
 Substitute the version to install below:
 ```
-$ bash deploy.sh -j dvesta-deploy-agent-1.0.2.jar ddagent /home/pi/ddagent \
-  http://marell.se/artifactory/libs-release-local/se/marell/dvesta/dvesta-deploy-agent/1.0.2/dvesta-deploy-agent-1.0.2-assemble.tar.gz
+$ bash deploy.sh -j dvesta-deploy-agent.jar ddagent /home/pi/ddagent \
+ http://marell.se/artifactory/libs-release-local/se/marell/dvesta/dvesta-deploy-agent/1.0.15/dvesta-deploy-agent-1.0.15-assemble.tar.gz
 ```
+
+Change dvesta-gateway username and password:
+```
+$ vi /etc/init.d/ddagent
+...
+dvestaGatewayUsername=<yourusername>
+dvestaGatewayPassword=<yourpassword>
+...
+```
+
 
 ### Configuration parameters
 ```

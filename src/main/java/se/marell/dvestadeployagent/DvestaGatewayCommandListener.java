@@ -10,11 +10,17 @@ import se.marell.dvestagatewayclient.CommandResponseSender;
 import se.marell.dvestagatewayclient.GatewayCommandListener;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Component
 class DvestaGatewayCommandListener implements GatewayCommandListener {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static String convertStreamToString(InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 
     @Override
     public void command(CommandResponseSender sender, String messageId, String commandName, List<String> commandArgs) {
@@ -30,7 +36,8 @@ class DvestaGatewayCommandListener implements GatewayCommandListener {
                 String serviceName = commandArgs.get(2);
                 String installDir = commandArgs.get(3);
                 String artifactDownloadUrl = commandArgs.get(4);
-                logger.info(" deploy, artifactDownloadUser: {}, artifactDownloadPassword: {}, serviceName: {}, installDir: {}, artifactDownloadUrl: {}",
+                logger.info(" deploy, artifactDownloadUser: {}, artifactDownloadPassword: {}, " +
+                                "serviceName: {}, installDir: {}, artifactDownloadUrl: {}",
                         artifactDownloadUser, artifactDownloadPassword, serviceName, installDir, artifactDownloadUrl);
                 try {
                     // serviceName installDir artifactDownloadUrl
@@ -41,18 +48,59 @@ class DvestaGatewayCommandListener implements GatewayCommandListener {
                             serviceName,
                             installDir,
                             artifactDownloadUrl
-                            );
-                    Runtime.getRuntime().exec(cmd);
-                    logger.info("deploy succeeded");
+                    );
+                    CommandOutput out = executeCommand(cmd);
+                    logger.debug("deploy command output: {}", out);
+                    if (out.exitCode == 0) {
+                        logger.info("deploy script succeeded");
+                    } else {
+                        logger.info("deploy script failed with exit code: {}, error: {}", out.exitCode, out.errorOutput);
+                    }
                 } catch (IOException e) {
-                    logger.error("Failed to download artifact: {}", e.getMessage());
-                    sender.sendResponse(messageId, "deploy failed: " + e.getMessage());
+                    String msg = "Execution of deploy script failed: " + e.getMessage();
+                    logger.error(msg);
+                    sender.sendResponse(messageId, msg);
                 }
             }
         } else {
             String msg = "Unknown command: " + commandName;
             logger.warn(msg);
             sender.sendResponse(messageId, msg);
+        }
+    }
+
+    private CommandOutput executeCommand(String cmd) throws IOException {
+        Process p = Runtime.getRuntime().exec(cmd);
+        int exitCode;
+        try {
+            exitCode = p.waitFor();
+        } catch (InterruptedException e) {
+            throw new IOException("Interrupted");
+        }
+        return new CommandOutput(
+                exitCode,
+                convertStreamToString(p.getInputStream()),
+                convertStreamToString(p.getErrorStream()));
+    }
+
+    private static class CommandOutput {
+        int exitCode;
+        String standardOutput;
+        String errorOutput;
+
+        public CommandOutput(int exitCode, String standardOutput, String errorOutput) {
+            this.exitCode = exitCode;
+            this.standardOutput = standardOutput;
+            this.errorOutput = errorOutput;
+        }
+
+        @Override
+        public String toString() {
+            return "CommandOutput{" +
+                    "exitCode=" + exitCode +
+                    ", standardOutput='" + standardOutput + '\'' +
+                    ", errorOutput='" + errorOutput + '\'' +
+                    '}';
         }
     }
 }
